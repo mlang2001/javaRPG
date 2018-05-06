@@ -7,7 +7,7 @@ import java.awt.Graphics;
 public class Player
 {
 	private int x, y, width, height;
-    private BufferedImage selectedSkin, skin1For, skin1Back, skin1Left, skin1Right, skin2, skin3;
+    private BufferedImage selectedSkin, skin1For, skin1Back, skin1Left, skin1Right, skin2For, skin2Back, skin2Left, skin2Right, skin3For, skin3Back, skin3Left, skin3Right;
 
 	public Player(int x, int y)
     {
@@ -16,7 +16,7 @@ public class Player
 		this.width = 80;
         this.height = 120;
         
-        //Instantiate the image object in the constructor
+        //Instantiating images
         try {
             skin1For = ImageIO.read(new File("images/playerSkin1Forward.png"));
         } catch (IOException e) {
@@ -37,6 +37,26 @@ public class Player
         } catch (IOException e) {
             e.printStackTrace();
         }
+        try {
+            skin2For = ImageIO.read(new File("images/playerSkin2Forward.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            skin2Back = ImageIO.read(new File("images/playerSkin2Back.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            skin2Left = ImageIO.read(new File("images/playerSkin2Left.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            skin2Right = ImageIO.read(new File("images/playerSkin2Right.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         selectedSkin = skin1For;
     }
     //drawCharacter
@@ -48,25 +68,25 @@ public class Player
     public void moveRight()
     {
         x = x + 5;
-        selectedSkin = skin1Right;
+        selectedSkin = skin2Right;
     }
 	//Movement left
 	public void moveLeft()
     {
         x = x - 5;
-        selectedSkin = skin1Left;
+        selectedSkin = skin2Left;
     }
 	//Movement up
 	public void moveUp()
     {
         y = y - 5;
-        selectedSkin = skin1Back;
+        selectedSkin = skin2Back;
     }
 	//Movement down
 	public void moveDown()
     {
         y = y + 5;
-        selectedSkin = skin1For;
+        selectedSkin = skin2For;
     }
 	//return X
 	public int getX()

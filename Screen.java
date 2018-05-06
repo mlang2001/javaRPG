@@ -28,6 +28,9 @@ public class Screen extends JPanel implements KeyListener
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
+		g.setColor(Color.GREEN);
+		g.fillRect(0, 0, 1000, 700);
+		
 		p1.drawMe(g);
 	}
 	/*public void playSound1()
