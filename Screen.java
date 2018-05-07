@@ -12,10 +12,13 @@ import java.awt.event.KeyEvent;
 public class Screen extends JPanel implements KeyListener
 {
 	Player p1;
+	ArrayList<Item> items;
 	public Screen()
 	{
 		this.setLayout(null);
 		p1 = new Player(20, 20);
+		items = new ArrayList<Item>();
+		items.add(new Spear(100, 300));
 		this.setFocusable(true);
 		addKeyListener(this);
 	}
@@ -30,8 +33,9 @@ public class Screen extends JPanel implements KeyListener
 		super.paintComponent(g);
 		g.setColor(Color.GREEN);
 		g.fillRect(0, 0, 1000, 700);
-		
+		items.get(0).drawMe(g);
 		p1.drawMe(g);
+
 	}
 	/*public void playSound1()
 	{
@@ -50,7 +54,6 @@ public class Screen extends JPanel implements KeyListener
 
 	public void animate()
 	{
-		int count = 1;
         while(true)
         {
             //wait for .01 second
@@ -60,7 +63,18 @@ public class Screen extends JPanel implements KeyListener
             } catch(InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
- 			
+			 
+			if (	p1.getX() <= items.get(0).getX() + items.get(0).getWidth() 
+				&& 	items.get(0).getX() <= p1.getX() + p1.getWidth() 
+				&& 	p1.getY() <= items.get(0).getY() + items.get(0).getHeight() 
+				&& 	items.get(0).getY() <= p1.getY() + p1.getHeight())
+			{
+				p1.inventory.add(items.get(0));
+				items.get(0).notVisible();
+			}
+				
+
+
             //repaint the graphics drawn
             repaint();
         }
