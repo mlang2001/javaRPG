@@ -19,7 +19,11 @@ public abstract class Item
     }
     public void drawMe(Graphics g)
     {
-        g.drawImage(skin, x, y, null);
+        if(visible)
+        {
+            g.drawImage(skin, x, y, null);
+        }
+        
     }
     public void setSkin(File img)
     {
