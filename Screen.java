@@ -31,6 +31,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 		items = new ArrayList<Item>();
 		npcs = new ArrayList<People>();
 		items.add(new Spear(100, 300));
+		items.add(new Chainmail1(300, 500));
 		npcs.add(new Friend(300, 400));
 		start = false;
 
@@ -72,6 +73,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 			g.drawImage(grass, 0, 477, null);
 			g.drawImage(grass, 850, 477, null);
 			items.get(0).drawMe(g);
+			items.get(1).drawMe(g);
 			npcs.get(0).drawMe(g);
 			p1.drawMe(g);
 		}

@@ -21,12 +21,12 @@ public abstract class People
     }
     public void drawMe(Graphics g)
     {
-        g.drawImage(skin, x, y, null);
+        g.drawImage(selectedSkin, x, y, null); 
     }
     public void setSkin(File img)
     {
         try {
-            skin = ImageIO.read(img);
+            selectedSkin = ImageIO.read(img);
         } catch (IOException e) {
             e.printStackTrace();
         }
