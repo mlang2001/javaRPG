@@ -19,9 +19,9 @@ import javax.imageio.ImageIO;
 public class Screen extends JPanel implements KeyListener, ActionListener
 {
 	Player p1;
-	boolean start;
+	int stage;
 	JButton buttonStart, buttonHelp;
-	BufferedImage grass;
+	BufferedImage grass, wood;
 	ArrayList<Item> items;
 	ArrayList<People> npcs;
 	public Screen()
@@ -33,7 +33,8 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 		items.add(new Spear(100, 300));
 		items.add(new Chainmail1(300, 500));
 		npcs.add(new Friend(300, 400));
-		start = false;
+		npcs.add(new Enemy1(500, 300));
+		stage = 0;
 
 		buttonStart = new JButton("Start Game");
 		buttonStart.setBounds(300,200,400,100);
@@ -47,12 +48,18 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 		this.add(buttonHelp);
 		buttonHelp.setVisible(true);
 		
-		//Instantiate image
+		//Instantiate images
         try {
             grass = ImageIO.read(new File("images/grass.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
 		}
+		try {
+            wood = ImageIO.read(new File("images/wood.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+		}
+		
 		
 		this.setFocusable(true);
 		addKeyListener(this);
@@ -66,7 +73,16 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		if(start)
+		if (stage == 0)
+		{
+			g.setColor(Color.RED);
+		    g.fillRect(0, 0, 1000, 700);
+		}
+		else if (stage == -1)
+		{
+			g.drawImage(wood, 10, 10, null);
+		}
+		else if(stage == 1)
 		{
 			g.drawImage(grass, 0, 0, null);
 			g.drawImage(grass, 850, 0, null);
@@ -75,16 +91,10 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 			items.get(0).drawMe(g);
 			items.get(1).drawMe(g);
 			npcs.get(0).drawMe(g);
+			npcs.get(1).drawMe(g);
 			p1.drawMe(g);
 		}
-		else
-		{
-			g.setColor(Color.RED);
-		    g.fillRect(0, 0, 1000, 700);
-		}
 		
-		
-
 	}
 	/*public void playSound1()
 	{
@@ -113,16 +123,17 @@ public class Screen extends JPanel implements KeyListener, ActionListener
                 Thread.currentThread().interrupt();
             }
 			 
-			if (	p1.getX() <= items.get(0).getX() + items.get(0).getWidth() 
-				&& 	items.get(0).getX() <= p1.getX() + p1.getWidth() 
-				&& 	p1.getY() <= items.get(0).getY() + items.get(0).getHeight() 
-				&& 	items.get(0).getY() <= p1.getY() + p1.getHeight())
+			for(int i = 0; i < items.size(); i++)
 			{
-				p1.inventory.add(items.get(0));
-				items.get(0).notVisible();
+				if (	p1.getX() <= items.get(i).getX() + items.get(i).getWidth() 
+				&& 	items.get(i).getX() <= p1.getX() + p1.getWidth() 
+				&& 	p1.getY() <= items.get(i).getY() + items.get(i).getHeight() 
+				&& 	items.get(i).getY() <= p1.getY() + p1.getHeight())
+				{
+					p1.inventory.add(items.get(0));
+					items.get(i).notVisible();
+				}
 			}
-				
-
 
             //repaint the graphics drawn
             repaint();
@@ -132,7 +143,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 	{
 		if (e.getSource() == buttonStart)
 		{
-			start = true;
+			stage = 1;
 			buttonStart.setVisible(false);
 			buttonHelp.setVisible(false);
 		}
@@ -163,6 +174,11 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 		if (e.getKeyCode() == 40)
 		{
 			p1.moveDown();
+		}
+		//i key
+		if (e.getKeyCode() == 73)
+		{
+			stage = -2;
 		}
 		//spacebar
 		if (e.getKeyCode() == 32)
