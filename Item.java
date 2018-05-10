@@ -17,6 +17,14 @@ public abstract class Item
         this.height = height;
         visible = false;
     }
+    public void drawMe(Graphics g, int x, int y)
+    {
+        if(visible)
+        {
+            g.drawImage(skin, x, y, null);
+        }
+        
+    }
     public void drawMe(Graphics g)
     {
         if(visible)
@@ -24,6 +32,10 @@ public abstract class Item
             g.drawImage(skin, x, y, null);
         }
         
+    }
+    public BufferedImage getImg()
+    {
+        return skin;
     }
     public void setSkin(File img)
     {

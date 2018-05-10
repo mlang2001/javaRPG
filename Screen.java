@@ -19,9 +19,11 @@ import javax.imageio.ImageIO;
 public class Screen extends JPanel implements KeyListener, ActionListener
 {
 	Player p1;
-	int stage;
+	int stage, nearCharacter;
+	boolean inventory;
 	JButton buttonStart, buttonHelp;
-	BufferedImage grass, wood;
+	BufferedImage grass, wood, inventoryText;
+	Color brown;
 	ArrayList<Item> items;
 	ArrayList<People> npcs;
 	public Screen()
@@ -35,6 +37,9 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 		npcs.add(new Friend(300, 400));
 		npcs.add(new Enemy1(500, 300));
 		stage = 0;
+		nearCharacter = -1;
+		inventory = false;
+		brown = new Color(153, 102, 0);
 
 		buttonStart = new JButton("Start Game");
 		buttonStart.setBounds(300,200,400,100);
@@ -59,7 +64,11 @@ public class Screen extends JPanel implements KeyListener, ActionListener
         } catch (IOException e) {
             e.printStackTrace();
 		}
-		
+		try {
+            inventoryText = ImageIO.read(new File("images/Inventory.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+		}
 		
 		this.setFocusable(true);
 		addKeyListener(this);
@@ -78,23 +87,62 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 			g.setColor(Color.RED);
 		    g.fillRect(0, 0, 1000, 700);
 		}
-		else if (stage == -1)
-		{
-			g.drawImage(wood, 10, 10, null);
-		}
 		else if(stage == 1)
 		{
 			g.drawImage(grass, 0, 0, null);
-			g.drawImage(grass, 850, 0, null);
-			g.drawImage(grass, 0, 477, null);
-			g.drawImage(grass, 850, 477, null);
 			items.get(0).drawMe(g);
 			items.get(1).drawMe(g);
 			npcs.get(0).drawMe(g);
 			npcs.get(1).drawMe(g);
 			p1.drawMe(g);
+			if(nearCharacter == 0)
+			{
+				if(p1.getInventorySize() != 2)
+				{
+					//text bubble saying go collect the items
+				}
+				else if(p1.getInventorySize() == 2)
+				{
+					//text bubble advancing plot
+				}
+			}
+			if(nearCharacter == 1)
+			{
+				//text bubble saying "oh you are looking for armor and a spear? I thought i saw some over there"
+			}
 		}
-		
+
+		if (inventory)
+		{
+			g.drawImage(wood, 10, 10, null);
+			g.setColor(brown);
+			g.drawRect(10, 10, 980, 680);
+			g.setColor(Color.BLACK);
+			g.drawImage(inventoryText, 250, 60, null);
+			for(int i = 0; i < 8; i++)
+			{
+				if(i < 4)
+				{
+					g.fillRect(50 + 250 * i, 175, 150, 150);
+					if(p1.getInventorySize() > i)
+					{
+						p1.drawInventoryAt(i, g, 110 + 250 * i, 220);
+					}
+					//make new images with same dimensions, larger objects, and centered
+					
+				}
+				else if(i > 3)
+				{
+					g.fillRect(50 + 250 * (i - 4), 425, 150, 150);
+					if(p1.getInventorySize() > i)
+					{
+						p1.drawInventoryAt(i, g, 110 + 250 * (i - 4), 470);
+					}
+					//make new images with same dimensions, larger objects, and centered
+					
+				}
+			}	
+		}
 	}
 	/*public void playSound1()
 	{
@@ -123,18 +171,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener
                 Thread.currentThread().interrupt();
             }
 			 
-			for(int i = 0; i < items.size(); i++)
-			{
-				if (	p1.getX() <= items.get(i).getX() + items.get(i).getWidth() 
-				&& 	items.get(i).getX() <= p1.getX() + p1.getWidth() 
-				&& 	p1.getY() <= items.get(i).getY() + items.get(i).getHeight() 
-				&& 	items.get(i).getY() <= p1.getY() + p1.getHeight())
-				{
-					p1.inventory.add(items.get(0));
-					items.get(i).notVisible();
-				}
-			}
-
+		
             //repaint the graphics drawn
             repaint();
         }
@@ -178,13 +215,43 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 		//i key
 		if (e.getKeyCode() == 73)
 		{
-			stage = -2;
+			if(inventory == true)
+			{
+				inventory = false;
+			}
+			else
+			{
+				inventory = true;
+			}
 		}
 		//spacebar
 		if (e.getKeyCode() == 32)
 		{
-			p1.reset();
+			//p1.reset();
+			for(int i = 0; i < items.size(); i++)
+			{
+				if (	p1.getX() <= items.get(i).getX() + items.get(i).getWidth() 
+				&& 	items.get(i).getX() <= p1.getX() + p1.getWidth() 
+				&& 	p1.getY() <= items.get(i).getY() + items.get(i).getHeight() 
+				&& 	items.get(i).getY() <= p1.getY() + p1.getHeight() && items.get(i).getVisible())
+				{
+					p1.addInventory(items.get(i));
+					items.get(i).notVisible();
+				}
+			}
+			for(int i = 0; i < npcs.size(); i++)
+			{
+				if (	p1.getX() <= npcs.get(i).getX() + npcs.get(i).getWidth() 
+				&& 	npcs.get(i).getX() <= p1.getX() + p1.getWidth() 
+				&& 	p1.getY() <= npcs.get(i).getY() + npcs.get(i).getHeight() 
+				&& 	npcs.get(i).getY() <= p1.getY() + p1.getHeight() && npcs.get(i).getVisible())
+				{
+					nearCharacter = i;
+					System.out.println(nearCharacter);
+				}
+			}	
 		}
+		nearCharacter = -1;
 	}	
 	public void keyReleased(KeyEvent e){}
 	public void keyTyped(KeyEvent e){}
