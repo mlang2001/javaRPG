@@ -9,7 +9,7 @@ public class Player
 {
 	private int x, y, width, height;
     private BufferedImage selectedSkin, skin1Front, skin1Back, skin1Left, skin1Right, skin2Front, skin2Back, skin2Left, skin2Right, skin3Front, skin3Back, skin3Left, skin3Right;
-    ArrayList<Item> inventory;
+    private ArrayList<Item> inventory;
 
 	public Player(int x, int y)
     {
@@ -61,6 +61,18 @@ public class Player
             e.printStackTrace();
         }
         selectedSkin = skin1Front;
+    }
+    public void addInventory(Item item)
+    {
+        inventory.add(item);
+    }
+    public int getInventorySize()
+    {
+        return inventory.size();
+    }
+    public void drawInventoryAt(int location, Graphics g, int x, int y)
+    {
+        g.drawImage(inventory.get(location).getImg(), x, y, null);
     }
     //drawCharacter
     public void drawMe(Graphics g)
