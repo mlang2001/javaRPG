@@ -1,6 +1,8 @@
 import java.awt.Graphics;
 import java.awt.Color;
 import javax.swing.JPanel;
+import javax.swing.Icon;
+import javax.swing.*;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.net.URL;
@@ -22,7 +24,9 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 	int stage, nearCharacter;
 	boolean inventory;
 	JButton buttonStart, buttonHelp;
-	BufferedImage grass, wood, inventoryText;
+	BufferedImage title, grass, wood, inventoryText, keepLooking, personTalking, success1;
+	String text;
+	Icon start;
 	Color brown;
 	ArrayList<Item> items;
 	ArrayList<People> npcs;
@@ -34,21 +38,22 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 		npcs = new ArrayList<People>();
 		items.add(new Spear(100, 300));
 		items.add(new Chainmail1(300, 500));
-		npcs.add(new Friend(300, 400));
+		npcs.add(new Friend(70, 70));
 		npcs.add(new Enemy1(500, 300));
 		stage = 0;
 		nearCharacter = -1;
 		inventory = false;
 		brown = new Color(153, 102, 0);
 
-		buttonStart = new JButton("Start Game");
-		buttonStart.setBounds(300,200,400,100);
+		start = new ImageIcon("start.png");
+		buttonStart = new JButton(start);
+		buttonStart.setBounds(600,300,300,70);
 		buttonStart.addActionListener(this);
 		this.add(buttonStart);
 		buttonStart.setVisible(true);
         
         buttonHelp = new JButton("Instructions");
-		buttonHelp.setBounds(300,400,400,100);
+		buttonHelp.setBounds(600,400,300,70);
 		buttonHelp.addActionListener(this);
 		this.add(buttonHelp);
 		buttonHelp.setVisible(true);
@@ -69,7 +74,26 @@ public class Screen extends JPanel implements KeyListener, ActionListener
         } catch (IOException e) {
             e.printStackTrace();
 		}
-		
+		try {
+            title = ImageIO.read(new File("images/title.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+		}
+		try {
+            keepLooking = ImageIO.read(new File("images/keepLooking.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+		}
+		try {
+            success1 = ImageIO.read(new File("images/success1.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+		}
+		try {
+            personTalking = ImageIO.read(new File("images/personTalking.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+		}
 		this.setFocusable(true);
 		addKeyListener(this);
 	}
@@ -84,8 +108,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 		super.paintComponent(g);
 		if (stage == 0)
 		{
-			g.setColor(Color.RED);
-		    g.fillRect(0, 0, 1000, 700);
+			g.drawImage(title, 0, 0, null);
 		}
 		else if(stage == 1)
 		{
@@ -100,14 +123,18 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 				if(p1.getInventorySize() != 2)
 				{
 					//text bubble saying go collect the items
+					g.drawImage(keepLooking, 0, 400, null);
 				}
 				else if(p1.getInventorySize() == 2)
 				{
 					//text bubble advancing plot
+					g.drawImage(success1, 0, 400, null);
+					p1.changeSkin1();
 				}
 			}
 			if(nearCharacter == 1)
 			{
+				g.drawImage(personTalking, 0, 400, null);
 				//text bubble saying "oh you are looking for armor and a spear? I thought i saw some over there"
 			}
 		}
@@ -212,7 +239,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 		{
 			p1.moveDown();
 		}
-		//i key
+		//i
 		if (e.getKeyCode() == 73)
 		{
 			if(inventory == true)
@@ -224,21 +251,9 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 				inventory = true;
 			}
 		}
-		//spacebar
-		if (e.getKeyCode() == 32)
+		//t
+		if (e.getKeyCode() == 84)
 		{
-			//p1.reset();
-			for(int i = 0; i < items.size(); i++)
-			{
-				if (	p1.getX() <= items.get(i).getX() + items.get(i).getWidth() 
-				&& 	items.get(i).getX() <= p1.getX() + p1.getWidth() 
-				&& 	p1.getY() <= items.get(i).getY() + items.get(i).getHeight() 
-				&& 	items.get(i).getY() <= p1.getY() + p1.getHeight() && items.get(i).getVisible())
-				{
-					p1.addInventory(items.get(i));
-					items.get(i).notVisible();
-				}
-			}
 			for(int i = 0; i < npcs.size(); i++)
 			{
 				if (	p1.getX() <= npcs.get(i).getX() + npcs.get(i).getWidth() 
@@ -251,7 +266,26 @@ public class Screen extends JPanel implements KeyListener, ActionListener
 				}
 			}	
 		}
-		nearCharacter = -1;
+		//spacebar
+		if(e.getKeyCode() == 32)
+		{
+			for(int i = 0; i < items.size(); i++)
+			{
+				if (	p1.getX() <= items.get(i).getX() + items.get(i).getWidth() 
+				&& 	items.get(i).getX() <= p1.getX() + p1.getWidth() 
+				&& 	p1.getY() <= items.get(i).getY() + items.get(i).getHeight() 
+				&& 	items.get(i).getY() <= p1.getY() + p1.getHeight() && items.get(i).getVisible())
+				{
+					p1.addInventory(items.get(i));
+					items.get(i).notVisible();
+				}
+			}
+			if(nearCharacter != -1)
+			{
+				nearCharacter = -1;
+			}
+		}
+		repaint();
 	}	
 	public void keyReleased(KeyEvent e){}
 	public void keyTyped(KeyEvent e){}

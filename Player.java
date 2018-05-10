@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class Player
 {
-	private int x, y, width, height;
+	private int x, y, width, height, skin;
     private BufferedImage selectedSkin, skin1Front, skin1Back, skin1Left, skin1Right, skin2Front, skin2Back, skin2Left, skin2Right, skin3Front, skin3Back, skin3Left, skin3Right;
     private ArrayList<Item> inventory;
 
@@ -17,7 +17,8 @@ public class Player
         this.y = y;
 		this.width = 50;
         this.height = 75;
-		inventory = new ArrayList<Item>();
+        inventory = new ArrayList<Item>();
+        skin = 0;
         
         //Instantiating images
         try {
@@ -62,6 +63,26 @@ public class Player
         }
         selectedSkin = skin1Front;
     }
+    public void changeSkin1()
+    {
+        skin = 1;
+        if(selectedSkin == skin1Front)
+        {
+            selectedSkin = skin2Front;
+        }
+        else if(selectedSkin == skin1Back)
+        {
+            selectedSkin = skin2Back;
+        }
+        else if(selectedSkin == skin1Left)
+        {
+            selectedSkin = skin2Left;
+        }
+        else if(selectedSkin == skin1Right)
+        {
+            selectedSkin = skin2Right;
+        }
+    }
     public void addInventory(Item item)
     {
         inventory.add(item);
@@ -83,13 +104,17 @@ public class Player
     public void moveRight()
     {
         x = x + 5;
-        if(inventory.size() == 0)
+        if(skin == 0)
         {
             selectedSkin = skin1Right;
         }
-        else
+        else if(skin == 1)
         {
             selectedSkin = skin2Right;
+        }
+        else if(skin == 2)
+        {
+            selectedSkin = skin3Right;
         }
         
     }
@@ -97,39 +122,51 @@ public class Player
 	public void moveLeft()
     {
         x = x - 5;
-        if(inventory.size() == 0)
+        if(skin == 0)
         {
             selectedSkin = skin1Left;
         }
-        else
+        else if(skin == 1)
         {
             selectedSkin = skin2Left;
+        }
+        else if(skin == 2)
+        {
+            selectedSkin = skin3Left;
         }
     }
 	//Movement up
 	public void moveUp()
     {
         y = y - 5;
-        if(inventory.size() == 0)
+        if(skin == 0)
         {
             selectedSkin = skin1Back;
         }
-        else
+        else if(skin == 1)
         {
             selectedSkin = skin2Back;
+        }
+        else if(skin == 2)
+        {
+            selectedSkin = skin3Back;
         }
     }
 	//Movement down
 	public void moveDown()
     {
         y = y + 5;
-        if(inventory.size() == 0)
+        if(skin == 0)
         {
             selectedSkin = skin1Front;
         }
-        else
+        else if(skin == 1)
         {
             selectedSkin = skin2Front;
+        }
+        else if(skin == 2)
+        {
+            selectedSkin = skin3Front;
         }
     }
 	//return X
