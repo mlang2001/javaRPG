@@ -83,6 +83,26 @@ public class Player
             selectedSkin = skin2Right;
         }
     }
+    public void changeSkin2()
+    {
+        skin = 1;
+        if(selectedSkin == skin2Front)
+        {
+            selectedSkin = skin3Front;
+        }
+        else if(selectedSkin == skin2Back)
+        {
+            selectedSkin = skin3Back;
+        }
+        else if(selectedSkin == skin2Left)
+        {
+            selectedSkin = skin3Left;
+        }
+        else if(selectedSkin == skin2Right)
+        {
+            selectedSkin = skin3Right;
+        }
+    }
     public void addInventory(Item item)
     {
         inventory.add(item);
@@ -103,7 +123,7 @@ public class Player
     //Movement right
     public void moveRight()
     {
-        x = x + 5;
+        x = x + 10;
         if(skin == 0)
         {
             selectedSkin = skin1Right;
@@ -121,7 +141,7 @@ public class Player
 	//Movement left
 	public void moveLeft()
     {
-        x = x - 5;
+        x = x - 10;
         if(skin == 0)
         {
             selectedSkin = skin1Left;
@@ -138,7 +158,7 @@ public class Player
 	//Movement up
 	public void moveUp()
     {
-        y = y - 5;
+        y = y - 10;
         if(skin == 0)
         {
             selectedSkin = skin1Back;
@@ -155,7 +175,7 @@ public class Player
 	//Movement down
 	public void moveDown()
     {
-        y = y + 5;
+        y = y + 10;
         if(skin == 0)
         {
             selectedSkin = skin1Front;
@@ -195,5 +215,13 @@ public class Player
 		x = 100;
         y = 100;
         selectedSkin = skin1Front;
-	}
+    }
+    public void clearInventory()
+    {
+        for(int i = 0; i < inventory.size(); i++)
+		{
+            inventory.remove(i);
+            i--;
+		}
+    }
 }
