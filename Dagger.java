@@ -7,7 +7,7 @@ public class Dagger extends Item
 {
     public Dagger(int x, int y)
     {
-        super(x, y, 110, 119);
+        super(x, y, 21, 41);
         super.setSkin(new File("images/dagger.png"));
         super.notVisible();
     }

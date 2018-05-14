@@ -18,6 +18,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.lang.model.util.ElementScanner6;
+
 import java.awt.geom.RoundRectangle2D;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
@@ -48,6 +50,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		items.add(new Dagger(700, 300));
 		items.add(new Chainmail2(700, 300));
 		items.add(new Bow(300, 400));
+		items.add(new Quiver(200, 100));
 		npcs.add(new Friend(70, 70));
 		npcs.add(new Enemy1(500, 300));
 		npcs.add(new Dummy(600, 100));
@@ -241,6 +244,8 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		}
 		else if(stage == 7)
 		{
+			items.get(0).notVisible();
+			items.get(1).notVisible();
 			p1.changeSkin1();
 			g.drawImage(grass, 0, 0, null);
 			p1.drawMe(g);
@@ -258,14 +263,20 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		else if(stage == 9)
 		{
 			g.drawImage(grass, 0, 0, null);
-			p1.drawMe(g);
+			
+			npcs.get(4).move();
 			npcs.get(4).drawMe(g);
 			items.get(4).drawMe(g);
+			items.get(5).drawMe(g);
 			if(!npcs.get(4).getVisible())
 			{
-				items.get(2).drawMe(g);
-				items.get(3).drawMe(g);
+				items.get(2).setVisible();
+				items.get(3).setVisible();
+				npcs.get(4).notMove();
 			}
+			items.get(2).drawMe(g, npcs.get(4).getX() + 50, npcs.get(4).getY() - 30);
+			items.get(3).drawMe(g, npcs.get(4).getX() - 30, npcs.get(4).getY() + 70);
+			p1.drawMe(g);
 		}
 		if (inventory)
 		{
@@ -307,7 +318,6 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 			String questString = String.valueOf(quest);
 			g.drawString(questString, 990, 20);
 		}
-		
 	}
 	public void playSoundStab()
 	{
@@ -326,17 +336,37 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 
 	public void animate()
 	{
+		int count = 0;
         while(true)
         {
-            //wait for .01 second
+			//enemy movement
+			if(stage == 9)
+			{
+				if (count < 270)
+				{
+					npcs.get(4).moveUp(new File("images/playerSkin3Back.png"));
+				}
+				else if (count < 700)
+				{
+					npcs.get(4).moveDown(new File("images/playerSkin3Front.png"));
+				}
+				else if(count < 1130)
+				{
+					npcs.get(4).moveUp(new File("images/playerSkin3Back.png"));
+				}
+				else
+				{
+					count = 270;
+				}
+				count++;
+			}
+			//wait for .01 second
             try 
             {
                 Thread.sleep(10);
             } catch(InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
-			 
-		
             //repaint the graphics drawn
             repaint();
         }
@@ -382,9 +412,10 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 			for(int i = 0; i < npcs.size(); i++)
 			{
 				if (	p1.getX() <= npcs.get(i).getX() + npcs.get(i).getWidth() 
-				&& 	npcs.get(i).getX() <= p1.getX() + p1.getWidth() 
-				&& 	p1.getY() <= npcs.get(i).getY() + npcs.get(i).getHeight() 
-				&& 	npcs.get(i).getY() <= p1.getY() + p1.getHeight() && npcs.get(i).getVisible())
+				&& npcs.get(i).getX() <= p1.getX() + p1.getWidth() 
+				&& p1.getY() <= npcs.get(i).getY() + npcs.get(i).getHeight() 
+				&& npcs.get(i).getY() <= p1.getY() + p1.getHeight() 
+				&& npcs.get(i).getVisible())
 				{
 					nearCharacter = i;
 				}
@@ -417,9 +448,10 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 			for(int i = 2; i < npcs.size(); i++)
 			{
 				if (	p1.getX() <= npcs.get(i).getX() + npcs.get(i).getWidth() 
-				&& 	npcs.get(i).getX() <= p1.getX() + p1.getWidth() 
-				&& 	p1.getY() <= npcs.get(i).getY() + npcs.get(i).getHeight() 
-				&& 	npcs.get(i).getY() <= p1.getY() + p1.getHeight() && npcs.get(i).getVisible())
+				&& npcs.get(i).getX() <= p1.getX() + p1.getWidth() 
+				&& p1.getY() <= npcs.get(i).getY() + npcs.get(i).getHeight() 
+				&& npcs.get(i).getY() <= p1.getY() + p1.getHeight() 
+				&& npcs.get(i).getVisible())
 				{
 					nearCharacter = i;
 					playSoundStab();
@@ -434,12 +466,25 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 			for(int i = 0; i < items.size(); i++)
 			{
 				if (	p1.getX() <= items.get(i).getX() + items.get(i).getWidth() 
-				&& 	items.get(i).getX() <= p1.getX() + p1.getWidth() 
-				&& 	p1.getY() <= items.get(i).getY() + items.get(i).getHeight() 
-				&& 	items.get(i).getY() <= p1.getY() + p1.getHeight() && items.get(i).getVisible())
+				&& items.get(i).getX() <= p1.getX() + p1.getWidth() 
+				&& p1.getY() <= items.get(i).getY() + items.get(i).getHeight() 
+				&& items.get(i).getY() <= p1.getY() + p1.getHeight() 
+				&& items.get(i).getVisible())
 				{
 					p1.addInventory(items.get(i));
 					items.get(i).notVisible();
+				}
+				else if(i == 2 || i == 3)
+				{
+					if (	p1.getX() <= items.get(i).getX2() + items.get(i).getWidth() 
+					&& items.get(i).getX2() <= p1.getX() + p1.getWidth() 
+					&& p1.getY() <= items.get(i).getY2() + items.get(i).getHeight() 
+					&& items.get(i).getY2() <= p1.getY() + p1.getHeight() 
+					&& items.get(i).getVisible())
+					{
+						p1.addInventory(items.get(i));
+						items.get(i).notVisible();
+					}
 				}
 			}
 			if(nearCharacter == 0 && p1.getInventorySize() == 2)
@@ -499,12 +544,8 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 	         
         repaint();
     }
- 
     public void mouseReleased(MouseEvent e) {}
- 
     public void mouseEntered(MouseEvent e) {}
- 
     public void mouseExited(MouseEvent e) {}
- 
     public void mouseClicked(MouseEvent e) {}
 }

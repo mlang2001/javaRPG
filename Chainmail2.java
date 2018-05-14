@@ -7,7 +7,7 @@ public class Chainmail2 extends Item
 {
     public Chainmail2(int x, int y)
     {
-        super(x, y, 110, 119);
+        super(x, y, 53, 50);
         super.setSkin(new File("images/chainmail2.png"));
         super.notVisible();
     }

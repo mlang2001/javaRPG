@@ -8,7 +8,7 @@ public class Dummy extends People
 {
     public Dummy(int x, int y)
     {
-        super(x, y, 50, 75);
+        super(x, y, 105, 102);
         super.setSkin(new File("images/dummy.png"));
         super.setVisible();
     }

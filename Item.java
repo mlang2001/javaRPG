@@ -6,7 +6,7 @@ import java.awt.Graphics;
 
 public abstract class Item
 {
-    private int x, y, width, height;
+    private int x, y, x2, y2, width, height;
     private BufferedImage skin;
     private boolean visible;
     public Item(int x, int y, int width, int height)
@@ -23,6 +23,8 @@ public abstract class Item
         {
             g.drawImage(skin, x, y, null);
         }
+        x2 = x;
+        y2 = y;
         
     }
     public void drawMe(Graphics g)
@@ -54,7 +56,15 @@ public abstract class Item
 	public int getY()
 	{
 		return y;
-	}
+    }
+    public int getX2()
+    {
+        return x2;
+    }
+    public int getY2()
+    {
+        return y2;
+    }
 	//return width
 	public int getWidth()
 	{

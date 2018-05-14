@@ -10,6 +10,7 @@ public abstract class People
     public int lives, x, y;
     private BufferedImage skin, selectedSkin;
     public BufferedImage heart;
+    private boolean move;
 
     public boolean visible;
     public People(int x, int y, int width, int height)
@@ -25,6 +26,7 @@ public abstract class People
         } catch (IOException e) {
             e.printStackTrace();
         }
+        move = false;
     }
     public void drawMe(Graphics g)
     {
@@ -83,5 +85,37 @@ public abstract class People
         {
             notVisible();
         }
+    }
+    public void moveUp(File img)
+    {
+        if(move)
+        {
+            y = y - 1;
+            try {
+                selectedSkin = ImageIO.read(img);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } 
+    }
+    public void moveDown(File img)
+    {
+        if(move)
+        {
+            y = y + 1;
+            try {
+                selectedSkin = ImageIO.read(img);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public void move()
+    {
+        move = true;
+    }
+    public void notMove()
+    {
+        move = false;
     }
 }
