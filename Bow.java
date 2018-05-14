@@ -3,14 +3,12 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.Graphics;
-
-public class Enemy1 extends People
+public class Bow extends Item
 {
-    public Enemy1(int x, int y)
+    public Bow(int x, int y)
     {
-        super(x, y, 50, 75);
-        super.setSkin(new File("images/friendSkin2Right.png"));
+        super(x, y, 110, 119);
+        super.setSkin(new File("images/chainmail1.png"));
         super.setVisible();
     }
-    
 }

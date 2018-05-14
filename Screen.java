@@ -28,7 +28,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 	int stage, nearCharacter, quest;
 	boolean inventory;
 	JButton buttonStart, buttonHelp;
-	BufferedImage title, instructions, scene1, scene2, scene3, scene5, scene6;
+	BufferedImage title, instructions, scene1, scene2, scene3, scene5, scene6, scene8;
 	BufferedImage inventoryText, keepLooking, personTalking, success1, grass, wood;
 	String text;
 	Icon start;
@@ -45,9 +45,14 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		npcs = new ArrayList<People>();
 		items.add(new Spear(100, 100));
 		items.add(new Chainmail1(100, 200));
+		items.add(new Dagger(700, 300));
+		items.add(new Chainmail2(700, 300));
+		items.add(new Bow(300, 400));
 		npcs.add(new Friend(70, 70));
 		npcs.add(new Enemy1(500, 300));
-		npcs.add(new Dummy(600, 300));
+		npcs.add(new Dummy(600, 100));
+		npcs.add(new Dummy(600, 400));
+		npcs.add(new Enemy2(700, 300));
 		stage = 0;
 		quest = 0;
 		nearCharacter = -1;
@@ -58,84 +63,80 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		textFont = new Font("Luminari", Font.PLAIN, 30);
 		questFont = new Font("Luminari", Font.PLAIN, 20);
 
-		/*buttonStart = new JButton("Sart");
-		buttonStart.setBounds(600,300,300,70);
-		buttonStart.addActionListener(this);
-		this.add(buttonStart);
-		buttonStart.setVisible(true);
-        
-        buttonHelp = new JButton("Instructions");
-		buttonHelp.setBounds(600,400,300,70);
-		buttonHelp.addActionListener(this);
-		this.add(buttonHelp);
-		buttonHelp.setVisible(true);
-		*/
 		//Instantiate images
-        try {
-            grass = ImageIO.read(new File("images/grass.jpg"));
-        } catch (IOException e) {
-            e.printStackTrace();
+		{
+			try {
+				grass = ImageIO.read(new File("images/grass.jpg"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				wood = ImageIO.read(new File("images/wood.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				inventoryText = ImageIO.read(new File("images/Inventory.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				title = ImageIO.read(new File("images/title.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				keepLooking = ImageIO.read(new File("images/keepLooking.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				success1 = ImageIO.read(new File("images/success1.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				personTalking = ImageIO.read(new File("images/personTalking.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				instructions = ImageIO.read(new File("images/instructions.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				scene1 = ImageIO.read(new File("images/Scene1.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				scene2 = ImageIO.read(new File("images/Scene2.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				scene3 = ImageIO.read(new File("images/Scene3.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				scene5 = ImageIO.read(new File("images/Scene5.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				scene6 = ImageIO.read(new File("images/Scene6.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				scene8 = ImageIO.read(new File("images/Scene8.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		try {
-            wood = ImageIO.read(new File("images/wood.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-		}
-		try {
-            inventoryText = ImageIO.read(new File("images/Inventory.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-		}
-		try {
-            title = ImageIO.read(new File("images/title.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-		}
-		try {
-            keepLooking = ImageIO.read(new File("images/keepLooking.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-		}
-		try {
-            success1 = ImageIO.read(new File("images/success1.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-		}
-		try {
-            personTalking = ImageIO.read(new File("images/personTalking.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-		}
-		try {
-            instructions = ImageIO.read(new File("images/instructions.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-		}
-		try {
-            scene1 = ImageIO.read(new File("images/Scene1.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-		}
-		try {
-            scene2 = ImageIO.read(new File("images/Scene2.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-		}
-		try {
-            scene3 = ImageIO.read(new File("images/Scene3.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-		}
-		try {
-            scene5 = ImageIO.read(new File("images/Scene5.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-		}
-		try {
-            scene6 = ImageIO.read(new File("images/Scene6.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-		}
+        
 		this.setFocusable(true);
 		addKeyListener(this);
 		addMouseListener(this);
@@ -244,8 +245,28 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 			g.drawImage(grass, 0, 0, null);
 			p1.drawMe(g);
 			npcs.get(2).drawMe(g);
+			npcs.get(3).drawMe(g);
+			if(!npcs.get(2).getVisible() && !npcs.get(3).getVisible())
+			{
+				stage++;
+			}
 		}
-
+		else if(stage == 8)
+		{
+			g.drawImage(scene8, 0, 0, null);
+		}
+		else if(stage == 9)
+		{
+			g.drawImage(grass, 0, 0, null);
+			p1.drawMe(g);
+			npcs.get(4).drawMe(g);
+			items.get(4).drawMe(g);
+			if(!npcs.get(4).getVisible())
+			{
+				items.get(2).drawMe(g);
+				items.get(3).drawMe(g);
+			}
+		}
 		if (inventory)
 		{
 			g.drawImage(wood, 10, 10, null);
@@ -288,11 +309,11 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		}
 		
 	}
-	/*public void playSound1()
+	public void playSoundStab()
 	{
         try
         {
-			URL url = this.getClass().getClassLoader().getResource("sound/Grunt.wav");
+			URL url = this.getClass().getClassLoader().getResource("sounds/stab.wav");
 			Clip clip = AudioSystem.getClip();
 			clip.open(AudioSystem.getAudioInputStream(url));
 			clip.start();
@@ -301,7 +322,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
         {
 			exc.printStackTrace(System.out);
 		}
-	}*/
+	}
 
 	public void animate()
 	{
@@ -384,11 +405,28 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				p1.addInventory(items.get(0));
 				p1.addInventory(items.get(1));
 			}
+			else if (stage < 9)
+			{
+				stage = 9;
+				quest = 3;
+			}
 		}
 		//r
 		if(e.getKeyCode() == 82)
 		{
-			
+			for(int i = 2; i < npcs.size(); i++)
+			{
+				if (	p1.getX() <= npcs.get(i).getX() + npcs.get(i).getWidth() 
+				&& 	npcs.get(i).getX() <= p1.getX() + p1.getWidth() 
+				&& 	p1.getY() <= npcs.get(i).getY() + npcs.get(i).getHeight() 
+				&& 	npcs.get(i).getY() <= p1.getY() + p1.getHeight() && npcs.get(i).getVisible())
+				{
+					nearCharacter = i;
+					playSoundStab();
+					npcs.get(i).loseLives();
+				}
+			}
+
 		}
 		//spacebar
 		if(e.getKeyCode() == 32)
@@ -413,8 +451,11 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 			{
 				nearCharacter = -1;
 			}
-			
-			
+			if(stage == 8)
+			{
+				stage = 9;
+				quest = 3;
+			}
 			if(stage == 3)
 			{
 				stage = 4;

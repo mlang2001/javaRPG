@@ -6,11 +6,12 @@ import java.awt.Graphics;
 
 public abstract class People
 {
-    private int x, y, width, height;
-    private BufferedImage skin;
-    private BufferedImage selectedSkin, skin1Front, skin1Back, skin1Left, skin1Right, skin2Front, skin2Back, skin2Left, skin2Right, skin3Front, skin3Back, skin3Left, skin3Right;
+    private int width, height; 
+    public int lives, x, y;
+    private BufferedImage skin, selectedSkin;
+    public BufferedImage heart;
 
-    private boolean visible;
+    public boolean visible;
     public People(int x, int y, int width, int height)
     {
         this.x = x;
@@ -18,10 +19,20 @@ public abstract class People
         this.width = width;
         this.height = height;
         visible = false;
+        lives = 3;
+        try {
+            heart = ImageIO.read(new File("images/heart.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     public void drawMe(Graphics g)
     {
-        g.drawImage(selectedSkin, x, y, null); 
+        if(visible)
+        {
+            g.drawImage(selectedSkin, x, y, null); 
+        }
+        
     }
     public void setSkin(File img)
     {
@@ -64,5 +75,13 @@ public abstract class People
     public boolean getVisible()
     {
         return visible;
+    }
+    public void loseLives()
+    {
+        lives--;
+        if(lives == 0)
+        {
+            notVisible();
+        }
     }
 }
