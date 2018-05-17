@@ -30,8 +30,8 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 	int stage, nearCharacter, quest;
 	boolean inventory;
 	JButton buttonStart, buttonHelp;
-	BufferedImage title, instructions, scene1, scene2, scene3, scene5, scene6, scene8;
-	BufferedImage inventoryText, keepLooking, personTalking, success1, grass, wood;
+	BufferedImage title, instructions, scene1, scene2, scene3, scene5, scene6, scene8, scene10, scene11;
+	BufferedImage inventoryText, keepLooking, personTalking, success1, notKilled, getWeapon, success2, grass, wood;
 	String text;
 	Icon start;
 	Color brown;
@@ -45,17 +45,20 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		p1 = new Player(20, 20);
 		items = new ArrayList<Item>();
 		npcs = new ArrayList<People>();
-		items.add(new Spear(100, 100));
-		items.add(new Chainmail1(100, 200));
+		items.add(new Spear(300, 600));
+		items.add(new Chainmail1(500, 200));
 		items.add(new Dagger(700, 300));
 		items.add(new Chainmail2(700, 300));
 		items.add(new Bow(300, 400));
 		items.add(new Quiver(200, 100));
-		npcs.add(new Friend(70, 70));
+		npcs.add(new Friend(100, 70));
 		npcs.add(new Enemy1(500, 300));
 		npcs.add(new Dummy(600, 100));
 		npcs.add(new Dummy(600, 400));
 		npcs.add(new Enemy2(700, 300));
+		npcs.add(new Enemy3(700, 100));
+		npcs.add(new Enemy3(700, 300));
+		npcs.add(new Enemy3(700, 500));
 		stage = 0;
 		quest = 0;
 		nearCharacter = -1;
@@ -69,7 +72,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		//Instantiate images
 		{
 			try {
-				grass = ImageIO.read(new File("images/grass.jpg"));
+				grass = ImageIO.read(new File("images/grass.png"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -99,7 +102,22 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				e.printStackTrace();
 			}
 			try {
+				success2 = ImageIO.read(new File("images/success2.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
 				personTalking = ImageIO.read(new File("images/personTalking.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				notKilled = ImageIO.read(new File("images/notKilled.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				getWeapon = ImageIO.read(new File("images/getWeapon.png"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -135,6 +153,16 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 			}
 			try {
 				scene8 = ImageIO.read(new File("images/Scene8.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				scene10 = ImageIO.read(new File("images/Scene10.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				scene11 = ImageIO.read(new File("images/Scene11.png"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -207,6 +235,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		{
 			g.drawImage(scene3, 0, 0, null);
 		}
+		//quest 1 (collect items)
 		else if(stage == 4)
 		{
 			g.drawImage(grass, 0, 0, null);
@@ -242,8 +271,10 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		{
 			g.drawImage(scene6, 0, 0, null);
 		}
+		//quest 2 (defeat dummies)
 		else if(stage == 7)
 		{
+			p1.clearInventory();
 			items.get(0).notVisible();
 			items.get(1).notVisible();
 			p1.changeSkin1();
@@ -260,23 +291,98 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		{
 			g.drawImage(scene8, 0, 0, null);
 		}
+		//quest 3 (kill enemy)
 		else if(stage == 9)
 		{
 			g.drawImage(grass, 0, 0, null);
-			
 			npcs.get(4).move();
 			npcs.get(4).drawMe(g);
 			items.get(4).drawMe(g);
 			items.get(5).drawMe(g);
 			if(!npcs.get(4).getVisible())
 			{
-				items.get(2).setVisible();
-				items.get(3).setVisible();
+				if(!p1.contains(items.get(2)))
+				{
+					items.get(2).setVisible();
+				}
+				if(!p1.contains(items.get(3)))
+				{
+					items.get(3).setVisible();
+				}
 				npcs.get(4).notMove();
 			}
 			items.get(2).drawMe(g, npcs.get(4).getX() + 50, npcs.get(4).getY() - 30);
 			items.get(3).drawMe(g, npcs.get(4).getX() - 30, npcs.get(4).getY() + 70);
 			p1.drawMe(g);
+			npcs.get(0).drawMe(g);
+			if(nearCharacter == 0)
+			{
+				if(npcs.get(4).getVisible())
+				{
+					//text bubble saying go kill the soldier
+					g.drawImage(notKilled, 0, 400, null);
+				}
+				else if(p1.getInventorySize() < 4)
+				{
+					//text bubble saying go collect the weapons
+					g.drawImage(getWeapon, 0, 400, null);
+				}
+				else 
+				{
+					//text bubble advancing plot
+					g.drawImage(success2, 0, 400, null);
+				}
+			}
+		}
+		else if(stage == 10)
+		{
+			g.drawImage(scene10, 0, 0, null);
+		}
+		else if(stage == 11)
+		{
+			g.drawImage(scene11, 0, 0, null);
+		}
+		else if(stage == 12)
+		{
+			p1.clearInventory();
+			p1.changeSkin2();
+			g.drawImage(grass, 0, 0, null);
+			npcs.get(0).setSkin(new File("images/friendSkin2Right.png"));
+			if(npcs.get(0).getX() < 400)
+			{
+				npcs.get(0).setLocation(p1.getX() - 100, p1.getY() - 100);
+			}
+			else
+			{
+				if(npcs.get(6).getVisible())
+				{
+					npcs.get(0).moveTowardsY(npcs.get(6).getY());
+				}
+				else if(npcs.get(5).getVisible())
+				{
+					npcs.get(0).moveTowardsY(npcs.get(5).getY());
+				}
+				else if(npcs.get(7).getVisible())
+				{
+					npcs.get(0).moveTowardsY(npcs.get(7).getY());
+				}
+				if(npcs.get(0).getY() == npcs.get(5).getY() 
+				|| npcs.get(0).getY() == npcs.get(6).getY() 
+				|| npcs.get(0).getY() == npcs.get(7).getY())
+				{
+					npcs.get(0).setSkin(new File("images/friendSkin2Right.png"));
+				}
+			}
+			
+			npcs.get(0).drawMe(g);
+			p1.drawMe(g);
+			npcs.get(5).drawMe(g);
+			npcs.get(6).drawMe(g);
+			npcs.get(7).drawMe(g);
+			if(p1.getX() > 1000)
+			{
+				p1.setX(10);
+			}
 		}
 		if (inventory)
 		{
@@ -306,10 +412,8 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 					{
 						p1.drawInventoryAt(i, g, 110 + 250 * (i - 4), 470);
 					}
-					//make new images with same dimensions, larger objects, and centered
-					
+					//make new images with same dimensions, larger objects, and centered				
 				}
-
 			}	
 		}
 		if(quest > 0)
@@ -419,7 +523,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				{
 					nearCharacter = i;
 				}
-			}	
+			}		
 		}
 		//p
 		if(e.getKeyCode() == 80)
@@ -428,18 +532,25 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 			{
 				stage = 4;
 				quest = 1;
+				p1.resetLoc();
 			}
 			else if (stage < 7)
 			{
 				stage = 7;
 				quest = 2;
-				p1.addInventory(items.get(0));
-				p1.addInventory(items.get(1));
+				p1.resetLoc();
 			}
 			else if (stage < 9)
 			{
 				stage = 9;
 				quest = 3;
+				p1.resetLoc();
+			}
+			else if(stage < 12)
+			{
+				stage = 12;
+				quest = 4;
+				p1.resetLoc();
 			}
 		}
 		//r
@@ -458,23 +569,13 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 					npcs.get(i).loseLives();
 				}
 			}
-
 		}
 		//spacebar
 		if(e.getKeyCode() == 32)
 		{
 			for(int i = 0; i < items.size(); i++)
 			{
-				if (	p1.getX() <= items.get(i).getX() + items.get(i).getWidth() 
-				&& items.get(i).getX() <= p1.getX() + p1.getWidth() 
-				&& p1.getY() <= items.get(i).getY() + items.get(i).getHeight() 
-				&& items.get(i).getY() <= p1.getY() + p1.getHeight() 
-				&& items.get(i).getVisible())
-				{
-					p1.addInventory(items.get(i));
-					items.get(i).notVisible();
-				}
-				else if(i == 2 || i == 3)
+				if(i == 2 || i == 3)
 				{
 					if (	p1.getX() <= items.get(i).getX2() + items.get(i).getWidth() 
 					&& items.get(i).getX2() <= p1.getX() + p1.getWidth() 
@@ -486,35 +587,44 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 						items.get(i).notVisible();
 					}
 				}
+				else
+				{
+					if (	p1.getX() <= items.get(i).getX() + items.get(i).getWidth() 
+					&& items.get(i).getX() <= p1.getX() + p1.getWidth() 
+					&& p1.getY() <= items.get(i).getY() + items.get(i).getHeight() 
+					&& items.get(i).getY() <= p1.getY() + p1.getHeight() 
+					&& items.get(i).getVisible())
+					{
+						p1.addInventory(items.get(i));
+						items.get(i).notVisible();
+					}
+				}
 			}
-			if(nearCharacter == 0 && p1.getInventorySize() == 2)
+			if(nearCharacter == 0 && p1.getInventorySize() == 2 && quest == 1)
 			{
 				stage++;
 				quest++;
+				p1.resetLoc();
 			}
-			if(nearCharacter != -1 && (stage == 4))
+			else if(nearCharacter == 0 && p1.getInventorySize() == 4 && quest == 3)
+			{
+				stage = 10;
+				p1.resetLoc();
+				p1.clearInventory();
+			}
+			else if(nearCharacter != -1 && (stage == 4 || stage == 9))
 			{
 				nearCharacter = -1;
 			}
-			if(stage == 8)
+			else if(stage != 4 && stage != 7 && stage != 9 && stage != 12)
 			{
-				stage = 9;
-				quest = 3;
+				stage++;
+				if(stage == 3 || stage == 6 || stage == 8 || stage == 11)
+				{
+					quest++;
+				}
+				p1.resetLoc();
 			}
-			if(stage == 3)
-			{
-				stage = 4;
-				quest = 1;
-			}
-			if(stage == 2)
-			{
-				stage = 3;
-			}
-			if(stage == 1)
-			{
-				stage = 2;
-			}
-			
 		}
 		repaint();
 	}	

@@ -7,7 +7,7 @@ import java.awt.Graphics;
 public abstract class People
 {
     private int width, height; 
-    public int lives, x, y;
+    public int lives, x, y, count;
     private BufferedImage skin, selectedSkin;
     public BufferedImage heart;
     private boolean move;
@@ -27,14 +27,21 @@ public abstract class People
             e.printStackTrace();
         }
         move = false;
+        count = 0;
     }
     public void drawMe(Graphics g)
     {
         if(visible)
         {
             g.drawImage(selectedSkin, x, y, null); 
+        } 
+    }
+    public void drawMe(Graphics g, int x , int y)
+    {
+        if(visible)
+        {
+            g.drawImage(selectedSkin, x, y, null); 
         }
-        
     }
     public void setSkin(File img)
     {
@@ -53,7 +60,12 @@ public abstract class People
 	public int getY()
 	{
 		return y;
-	}
+    }
+    public void setLocation(int newX, int newY)
+    {
+        x = newX;
+        y = newY;
+    }
 	//return width
 	public int getWidth()
 	{
@@ -117,5 +129,16 @@ public abstract class People
     public void notMove()
     {
         move = false;
+    }
+    public void moveTowardsY(int otherY)
+    {
+        if(y < otherY)
+        {
+            this.moveDown(new File("images/friendSkin2Front.png"));
+        }
+        else if(y > otherY)
+        {
+            moveUp(new File("images/friendSkin2Front.png"));
+        }
     }
 }

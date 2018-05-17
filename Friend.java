@@ -11,5 +11,11 @@ public class Friend extends People
         super(x, y, 50, 75);
         super.setSkin(new File("images/friendSkin1Left.png"));
         super.setVisible();
+        super.move();
     }
+    public void shoot()
+    {
+
+    }
+    
 }

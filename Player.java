@@ -61,6 +61,26 @@ public class Player
         } catch (IOException e) {
             e.printStackTrace();
         }
+        try {
+            skin3Front = ImageIO.read(new File("images/playerSkin3Front.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            skin3Back = ImageIO.read(new File("images/playerSkin3Back.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            skin3Left = ImageIO.read(new File("images/playerSkin3Left.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            skin3Right = ImageIO.read(new File("images/playerSkin3Right.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         selectedSkin = skin1Front;
     }
     public void changeSkin1()
@@ -198,6 +218,16 @@ public class Player
 	public int getY()
 	{
 		return y;
+    }
+    //set X
+	public void setX(int newX)
+	{
+		x = newX;
+	}
+	//set y
+	public void setY(int newY)
+	{
+		y = newY;
 	}
 	//return width
 	public int getWidth()
@@ -210,11 +240,10 @@ public class Player
 		return height;
 	}
 	//reset player
-	public void reset()
+	public void resetLoc()
 	{
-		x = 100;
-        y = 100;
-        selectedSkin = skin1Front;
+		x = 20;
+        y = 20;
     }
     public void clearInventory()
     {
@@ -223,5 +252,16 @@ public class Player
             inventory.remove(i);
             i--;
 		}
+    }
+    public boolean contains(Item item)
+    {
+        for(int i = 0; i < inventory.size(); i++)
+        {
+            if(inventory.get(i).equals(item))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
