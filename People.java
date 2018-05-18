@@ -51,6 +51,14 @@ public abstract class People
             e.printStackTrace();
         }
     }
+    public int getLives()
+    {
+        return lives;
+    }
+    public void setLives()
+    {
+        lives = 3;
+    }
     //return X
 	public int getX()
 	{
@@ -102,7 +110,7 @@ public abstract class People
     {
         if(move)
         {
-            y = y - 1;
+            y = y - 2;
             try {
                 selectedSkin = ImageIO.read(img);
             } catch (IOException e) {
@@ -110,11 +118,15 @@ public abstract class People
             }
         } 
     }
+    public void moveRight()
+    {
+        x = x + 3;
+    }
     public void moveDown(File img)
     {
         if(move)
         {
-            y = y + 1;
+            y = y + 2;
             try {
                 selectedSkin = ImageIO.read(img);
             } catch (IOException e) {
@@ -122,6 +134,16 @@ public abstract class People
             }
         }
     }
+    //set X
+	public void setX(int newX)
+	{
+		x = newX;
+	}
+	//set y
+	public void setY(int newY)
+	{
+		y = newY;
+	}
     public void move()
     {
         move = true;

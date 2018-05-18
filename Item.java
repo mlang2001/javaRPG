@@ -75,6 +75,15 @@ public abstract class Item
 	{
 		return height;
     }
+    public void setX(int newX)
+	{
+		x = newX;
+	}
+	//set y
+	public void setY(int newY)
+	{
+		y = newY;
+	}
     //set visible to true
     public void setVisible()
     {
@@ -89,5 +98,22 @@ public abstract class Item
     {
         return visible;
     }
-
+    public void shoot(int count, int startX, int startY)
+    {
+        visible = true;
+        if(count < 20)
+        {
+            x = startX;
+            y = startY;
+        }
+        if(count >= 20)
+        {
+            x = x + 2;
+            y = startY;
+        }
+        if(x > 1000)
+        {
+            visible = false;
+        }
+    }
 }

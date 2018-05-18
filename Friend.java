@@ -13,9 +13,6 @@ public class Friend extends People
         super.setVisible();
         super.move();
     }
-    public void shoot()
-    {
-
-    }
+    
     
 }

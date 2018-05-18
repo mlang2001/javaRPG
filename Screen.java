@@ -28,10 +28,11 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 {
 	Player p1;
 	int stage, nearCharacter, quest;
-	boolean inventory;
+	boolean inventory, moveUp, moveDown, moveLeft, moveRight;
 	JButton buttonStart, buttonHelp;
 	BufferedImage title, instructions, scene1, scene2, scene3, scene5, scene6, scene8, scene10, scene11;
-	BufferedImage inventoryText, keepLooking, personTalking, success1, notKilled, getWeapon, success2, grass, wood;
+	BufferedImage inventoryText, keepLooking, personTalking, success1, notKilled, getWeapon, success2; 
+	BufferedImage grass, wood, castle;
 	String text;
 	Icon start;
 	Color brown;
@@ -51,11 +52,15 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		items.add(new Chainmail2(700, 300));
 		items.add(new Bow(300, 400));
 		items.add(new Quiver(200, 100));
+		items.add(new Arrow(430, 100));
 		npcs.add(new Friend(100, 70));
 		npcs.add(new Enemy1(500, 300));
 		npcs.add(new Dummy(600, 100));
 		npcs.add(new Dummy(600, 400));
 		npcs.add(new Enemy2(700, 300));
+		npcs.add(new Enemy3(700, 100));
+		npcs.add(new Enemy3(700, 300));
+		npcs.add(new Enemy3(700, 500));
 		npcs.add(new Enemy3(700, 100));
 		npcs.add(new Enemy3(700, 300));
 		npcs.add(new Enemy3(700, 500));
@@ -78,6 +83,11 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 			}
 			try {
 				wood = ImageIO.read(new File("images/wood.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				castle = ImageIO.read(new File("images/castle.png"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -223,165 +233,250 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 			g2.draw(new RoundRectangle2D.Double(100, 500, 300, 70, 50, 50));
 			g.drawString("Back", 180, 550);
 		}
-		else if(stage == 1)
+		//Stages 1-4
 		{
-			g.drawImage(scene1, 0, 0, null);
-		}
-		else if(stage == 2)
-		{
-			g.drawImage(scene2, 0, 0, null);
-		}
-		else if(stage == 3)
-		{
-			g.drawImage(scene3, 0, 0, null);
-		}
-		//quest 1 (collect items)
-		else if(stage == 4)
-		{
-			g.drawImage(grass, 0, 0, null);
-			items.get(0).drawMe(g);
-			items.get(1).drawMe(g);
-			npcs.get(0).drawMe(g);
-			npcs.get(1).drawMe(g);
-			p1.drawMe(g);
-			if(nearCharacter == 0)
+			if(stage == 1)
 			{
-				if(p1.getInventorySize() != 2)
-				{
-					//text bubble saying go collect the items
-					g.drawImage(keepLooking, 0, 400, null);
-				}
-				else if(p1.getInventorySize() == 2)
-				{
-					//text bubble advancing plot
-					g.drawImage(success1, 0, 400, null);
-					p1.changeSkin1();
-				}
+				g.drawImage(scene1, 0, 0, null);
 			}
-			if(nearCharacter == 1)
+			else if(stage == 2)
 			{
-				g.drawImage(personTalking, 0, 400, null);
+				g.drawImage(scene2, 0, 0, null);
 			}
-		}
-		else if(stage == 5)
-		{
-			g.drawImage(scene5, 0, 0, null);
-		}
-		else if(stage == 6)
-		{
-			g.drawImage(scene6, 0, 0, null);
-		}
-		//quest 2 (defeat dummies)
-		else if(stage == 7)
-		{
-			p1.clearInventory();
-			items.get(0).notVisible();
-			items.get(1).notVisible();
-			p1.changeSkin1();
-			g.drawImage(grass, 0, 0, null);
-			p1.drawMe(g);
-			npcs.get(2).drawMe(g);
-			npcs.get(3).drawMe(g);
-			if(!npcs.get(2).getVisible() && !npcs.get(3).getVisible())
+			else if(stage == 3)
 			{
-				stage++;
+				g.drawImage(scene3, 0, 0, null);
 			}
-		}
-		else if(stage == 8)
-		{
-			g.drawImage(scene8, 0, 0, null);
-		}
-		//quest 3 (kill enemy)
-		else if(stage == 9)
-		{
-			g.drawImage(grass, 0, 0, null);
-			npcs.get(4).move();
-			npcs.get(4).drawMe(g);
-			items.get(4).drawMe(g);
-			items.get(5).drawMe(g);
-			if(!npcs.get(4).getVisible())
+			//quest 1 (collect items)
+			else if(stage == 4)
 			{
-				if(!p1.contains(items.get(2)))
+				g.drawImage(grass, 0, 0, null);
+				items.get(0).drawMe(g);
+				items.get(1).drawMe(g);
+				npcs.get(0).drawMe(g);
+				npcs.get(1).drawMe(g);
+				p1.drawMe(g);
+				if(nearCharacter == 0)
 				{
-					items.get(2).setVisible();
+					if(p1.getInventorySize() != 2)
+					{
+						//text bubble saying go collect the items
+						g.drawImage(keepLooking, 0, 400, null);
+					}
+					else if(p1.getInventorySize() == 2)
+					{
+						//text bubble advancing plot
+						g.drawImage(success1, 0, 400, null);
+						p1.changeSkin1();
+					}
 				}
-				if(!p1.contains(items.get(3)))
+				if(nearCharacter == 1)
 				{
-					items.get(3).setVisible();
-				}
-				npcs.get(4).notMove();
-			}
-			items.get(2).drawMe(g, npcs.get(4).getX() + 50, npcs.get(4).getY() - 30);
-			items.get(3).drawMe(g, npcs.get(4).getX() - 30, npcs.get(4).getY() + 70);
-			p1.drawMe(g);
-			npcs.get(0).drawMe(g);
-			if(nearCharacter == 0)
-			{
-				if(npcs.get(4).getVisible())
-				{
-					//text bubble saying go kill the soldier
-					g.drawImage(notKilled, 0, 400, null);
-				}
-				else if(p1.getInventorySize() < 4)
-				{
-					//text bubble saying go collect the weapons
-					g.drawImage(getWeapon, 0, 400, null);
-				}
-				else 
-				{
-					//text bubble advancing plot
-					g.drawImage(success2, 0, 400, null);
+					g.drawImage(personTalking, 0, 400, null);
 				}
 			}
 		}
-		else if(stage == 10)
+		//stages 5-7
 		{
-			g.drawImage(scene10, 0, 0, null);
-		}
-		else if(stage == 11)
-		{
-			g.drawImage(scene11, 0, 0, null);
-		}
-		else if(stage == 12)
-		{
-			p1.clearInventory();
-			p1.changeSkin2();
-			g.drawImage(grass, 0, 0, null);
-			npcs.get(0).setSkin(new File("images/friendSkin2Right.png"));
-			if(npcs.get(0).getX() < 400)
+			if(stage == 5)
 			{
-				npcs.get(0).setLocation(p1.getX() - 100, p1.getY() - 100);
+				g.drawImage(scene5, 0, 0, null);
 			}
-			else
+			else if(stage == 6)
 			{
-				if(npcs.get(6).getVisible())
+				g.drawImage(scene6, 0, 0, null);
+			}
+			//quest 2 (defeat dummies)
+			else if(stage == 7)
+			{
+				p1.clearInventory();
+				items.get(0).notVisible();
+				items.get(1).notVisible();
+				p1.changeSkin1();
+				g.drawImage(grass, 0, 0, null);
+				p1.drawMe(g);
+				npcs.get(2).drawMe(g);
+				npcs.get(3).drawMe(g);
+				if(!npcs.get(2).getVisible() && !npcs.get(3).getVisible())
 				{
-					npcs.get(0).moveTowardsY(npcs.get(6).getY());
-				}
-				else if(npcs.get(5).getVisible())
-				{
-					npcs.get(0).moveTowardsY(npcs.get(5).getY());
-				}
-				else if(npcs.get(7).getVisible())
-				{
-					npcs.get(0).moveTowardsY(npcs.get(7).getY());
-				}
-				if(npcs.get(0).getY() == npcs.get(5).getY() 
-				|| npcs.get(0).getY() == npcs.get(6).getY() 
-				|| npcs.get(0).getY() == npcs.get(7).getY())
-				{
-					npcs.get(0).setSkin(new File("images/friendSkin2Right.png"));
+					stage++;
 				}
 			}
-			
-			npcs.get(0).drawMe(g);
-			p1.drawMe(g);
-			npcs.get(5).drawMe(g);
-			npcs.get(6).drawMe(g);
-			npcs.get(7).drawMe(g);
-			if(p1.getX() > 1000)
+		}
+		//stages 8-9
+		{
+			if(stage == 8)
 			{
-				p1.setX(10);
+				g.drawImage(scene8, 0, 0, null);
+				npcs.get(5).notVisible();
+				npcs.get(6).notVisible();
+				npcs.get(7).notVisible();
+			}
+			//quest 3 (kill enemy)
+			else if(stage == 9)
+			{
+				g.drawImage(grass, 0, 0, null);
+				npcs.get(4).move();
+				npcs.get(4).drawMe(g);
+				items.get(4).drawMe(g);
+				items.get(5).drawMe(g);
+				if(!npcs.get(4).getVisible())
+				{
+					if(!p1.contains(items.get(2)))
+					{
+						items.get(2).setVisible();
+					}
+					if(!p1.contains(items.get(3)))
+					{
+						items.get(3).setVisible();
+					}
+					npcs.get(4).notMove();
+				}
+				items.get(2).drawMe(g, npcs.get(4).getX() + 50, npcs.get(4).getY() - 30);
+				items.get(3).drawMe(g, npcs.get(4).getX() - 30, npcs.get(4).getY() + 70);
+				p1.drawMe(g);
+				npcs.get(0).drawMe(g);
+				if(nearCharacter == 0)
+				{
+					if(npcs.get(4).getVisible())
+					{
+						//text bubble saying go kill the soldier
+						g.drawImage(notKilled, 0, 400, null);
+					}
+					else if(p1.getInventorySize() < 4)
+					{
+						//text bubble saying go collect the weapons
+						g.drawImage(getWeapon, 0, 400, null);
+					}
+					else 
+					{
+						//text bubble advancing plot
+						g.drawImage(success2, 0, 400, null);
+					}
+				}
+			}
+		}
+		//Stages 10-13
+		{
+			if(stage == 10)
+			{
+				g.drawImage(scene10, 0, 0, null);
+			}
+			else if(stage == 11)
+			{
+				g.drawImage(scene11, 0, 0, null);
+				npcs.get(5).setVisible();
+				npcs.get(6).setVisible();
+				npcs.get(7).setVisible();
+				npcs.get(5).setLives();
+				npcs.get(6).setLives();
+				npcs.get(7).setLives();
+
+			}
+			else if(stage == 12)
+			{
+				npcs.get(8).notVisible();
+				npcs.get(9).notVisible();
+				npcs.get(10).notVisible();
+				p1.clearInventory();
+				p1.changeSkin2();
+				g.drawImage(grass, 0, 0, null);
+				npcs.get(0).setSkin(new File("images/friendSkin2Right.png"));
+				if(npcs.get(0).getX() < 400)
+				{
+					npcs.get(0).setLocation(p1.getX() - 100, p1.getY() - 100);
+				}
+				else
+				{
+					if(npcs.get(6).getVisible())
+					{
+						npcs.get(0).moveTowardsY(npcs.get(6).getY());
+						items.get(6).notVisible();
+					}
+					else if(npcs.get(5).getVisible())
+					{
+						npcs.get(0).moveTowardsY(npcs.get(5).getY());
+						items.get(6).notVisible();
+					}
+					else if(npcs.get(7).getVisible())
+					{
+						npcs.get(0).moveTowardsY(npcs.get(7).getY());
+						items.get(6).notVisible();
+					}
+					if(npcs.get(0).getY() == npcs.get(5).getY() 
+					|| npcs.get(0).getY() == npcs.get(6).getY() 
+					|| npcs.get(0).getY() == npcs.get(7).getY())
+					{
+						npcs.get(0).setSkin(new File("images/friendSkin2Right.png"));
+						items.get(6).setVisible();
+						items.get(6).drawMe(g);
+						npcs.get(8).setVisible();
+						npcs.get(9).setVisible();
+						npcs.get(10).setVisible();
+					}
+				}
+				npcs.get(0).drawMe(g);
+				p1.drawMe(g);
+				npcs.get(5).drawMe(g);
+				npcs.get(6).drawMe(g);
+				npcs.get(7).drawMe(g);
+				if(p1.getX() > 1000)
+				{
+					p1.setX(10);
+					npcs.get(0).setX(p1.getX() - 100);
+					npcs.get(0).setY(p1.getY() - 100);
+					npcs.get(8).setLives();
+					npcs.get(9).setLives();
+					npcs.get(10).setLives();
+					npcs.get(5).notVisible();
+					npcs.get(6).notVisible();
+					npcs.get(7).notVisible();
+					stage = 13;
+				}
+			}
+			else if(stage == 13)
+			{
+				g.drawImage(grass, 0, 0, null);
+				npcs.get(0).setSkin(new File("images/friendSkin2Right.png"));
+				npcs.get(0).drawMe(g);
+				p1.changeSkin2();
+				
+				g.drawImage(castle, 800, 200, null);
+				if(npcs.get(0).getX() < 400)
+				{
+					npcs.get(0).setLocation(p1.getX() - 100, p1.getY() - 100);
+				}
+				else
+				{
+					if(npcs.get(8).getVisible())
+					{
+						npcs.get(0).moveTowardsY(npcs.get(8).getY());
+						items.get(6).notVisible();
+					}
+					else if(npcs.get(9).getVisible())
+					{
+						npcs.get(0).moveTowardsY(npcs.get(9).getY());
+						items.get(6).notVisible();
+					}
+					else if(npcs.get(10).getVisible())
+					{
+						npcs.get(0).moveTowardsY(npcs.get(10).getY());
+						items.get(6).notVisible();
+					}
+					if(npcs.get(0).getY() == npcs.get(8).getY()
+					|| npcs.get(0).getY() == npcs.get(9).getY() 
+					|| npcs.get(0).getY() == npcs.get(10).getY())
+					{
+						npcs.get(0).setSkin(new File("images/friendSkin2Right.png"));
+						items.get(6).setVisible();
+						items.get(6).drawMe(g);
+					}
+				}
+				npcs.get(0).drawMe(g);
+				p1.drawMe(g);
+				npcs.get(8).drawMe(g);
+				npcs.get(9).drawMe(g);
+				npcs.get(10).drawMe(g);
 			}
 		}
 		if (inventory)
@@ -419,8 +514,11 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		if(quest > 0)
 		{
 			g.setFont(questFont);
+			g.setColor(Color.WHITE);
 			String questString = String.valueOf(quest);
 			g.drawString(questString, 990, 20);
+			String stageString = String.valueOf(stage);
+			g.drawString(stageString, 20, 20);
 		}
 	}
 	public void playSoundStab()
@@ -441,28 +539,94 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 	public void animate()
 	{
 		int count = 0;
+		int count2 = 0;
+		
         while(true)
         {
+			count2++;
+			if(items.get(6).getVisible() && items.get(6).getX() < 1000)
+			{
+				items.get(6).shoot(count2, npcs.get(0).getX() + 30, npcs.get(0).getY() + 42);
+			}
+			if(count2 > 600)
+			{
+				count2 = 0;
+			}
 			//enemy movement
 			if(stage == 9)
 			{
-				if (count < 270)
+				if (count < 230)
 				{
 					npcs.get(4).moveUp(new File("images/playerSkin3Back.png"));
 				}
-				else if (count < 700)
+				else if (count < 600)
 				{
 					npcs.get(4).moveDown(new File("images/playerSkin3Front.png"));
 				}
-				else if(count < 1130)
+				else if(count < 1000)
 				{
 					npcs.get(4).moveUp(new File("images/playerSkin3Back.png"));
 				}
 				else
 				{
-					count = 270;
+					count = 230;
 				}
 				count++;
+			}
+			if(stage == 12)
+			{
+				for(int i = 0; i < 3; i++)
+				{
+					if (	items.get(6).getX() <= npcs.get(i + 5).getX() + npcs.get(i + 5).getWidth() 
+					&& npcs.get(i + 5).getX() <= items.get(6).getX() + items.get(6).getWidth() 
+					&& items.get(6).getY() <= npcs.get(i + 5).getY() + npcs.get(i + 5).getHeight() 
+					&& npcs.get(i + 5).getY() <= items.get(6).getY() + items.get(6).getHeight() 
+					&& npcs.get(i + 5).getVisible())
+					{
+						playSoundStab();
+						npcs.get(i + 5).loseLives();
+						items.get(6).notVisible();
+						items.get(6).setX(npcs.get(0).getX() + 30);
+						items.get(6).setY(npcs.get(0).getY() + 42);
+						count2 = 0;
+					}
+				}
+			}
+			else if(stage == 13)
+			{
+				for(int i = 3; i < 6; i++)
+				{
+					if (	items.get(6).getX() <= npcs.get(i + 5).getX() + npcs.get(i + 5).getWidth() 
+					&& npcs.get(i + 5).getX() <= items.get(6).getX() + items.get(6).getWidth() 
+					&& items.get(6).getY() <= npcs.get(i + 5).getY() + npcs.get(i + 5).getHeight() 
+					&& npcs.get(i + 5).getY() <= items.get(6).getY() + items.get(6).getHeight() 
+					&& npcs.get(i + 5).getVisible())
+					{
+						playSoundStab();
+						npcs.get(i + 5).loseLives();
+						items.get(6).notVisible();
+						items.get(6).setX(npcs.get(0).getX() + 30);
+						items.get(6).setY(npcs.get(0).getY() + 42);
+						count2 = 0;
+					}
+				}
+			}
+			
+			if(moveUp)
+			{
+				p1.moveUp();
+			}
+			if(moveDown)
+			{
+				p1.moveDown();
+			}
+			if(moveLeft)
+			{
+				p1.moveLeft();
+			}
+			if(moveRight)
+			{
+				p1.moveRight();
 			}
 			//wait for .01 second
             try 
@@ -484,19 +648,19 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		//arrow keys
 		if (e.getKeyCode() == 39)
 		{
-			p1.moveRight();
+			moveRight = true;
 		}
 		if (e.getKeyCode() == 37)
 		{
-			p1.moveLeft();
+			moveLeft = true;
 		}
 		if (e.getKeyCode() == 38)
 		{
-			p1.moveUp();
+			moveUp = true;
 		}
 		if (e.getKeyCode() == 40)
 		{
-			p1.moveDown();
+			moveDown = true;
 		}
 		//i
 		if (e.getKeyCode() == 73)
@@ -552,6 +716,17 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				quest = 4;
 				p1.resetLoc();
 			}
+			else if(stage < 13)
+			{
+				npcs.get(5).notVisible();
+				npcs.get(6).notVisible();
+				npcs.get(7).notVisible();
+				npcs.get(8).setVisible();
+				npcs.get(9).setVisible();
+				npcs.get(10).setVisible();
+				stage = 13;
+				quest = 4;
+			}
 		}
 		//r
 		if(e.getKeyCode() == 82)
@@ -565,8 +740,12 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				&& npcs.get(i).getVisible())
 				{
 					nearCharacter = i;
-					playSoundStab();
-					npcs.get(i).loseLives();
+					if(npcs.get(i).getVisible())
+					{
+						playSoundStab();
+						npcs.get(i).loseLives();
+					}
+					
 				}
 			}
 		}
@@ -612,7 +791,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				p1.resetLoc();
 				p1.clearInventory();
 			}
-			else if(nearCharacter != -1 && (stage == 4 || stage == 9))
+			else if(nearCharacter != -1 && (stage == 4))
 			{
 				nearCharacter = -1;
 			}
@@ -628,7 +807,25 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		}
 		repaint();
 	}	
-	public void keyReleased(KeyEvent e){}
+	public void keyReleased(KeyEvent e)
+	{
+		if (e.getKeyCode() == 39)
+		{
+			moveRight = false;
+		}
+		if (e.getKeyCode() == 37)
+		{
+			moveLeft = false;
+		}
+		if (e.getKeyCode() == 38)
+		{
+			moveUp = false;
+		}
+		if (e.getKeyCode() == 40)
+		{
+			moveDown = false;
+		}
+	}
 	public void keyTyped(KeyEvent e){}
 	public void mousePressed(MouseEvent e) 
 	{	
