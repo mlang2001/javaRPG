@@ -28,16 +28,17 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 {
 	Player p1;
 	int stage, nearCharacter, quest;
-	boolean inventory, moveUp, moveDown, moveLeft, moveRight;
+	boolean inventory, moveUp, moveDown, moveLeft, moveRight, kingTalking;
 	JButton buttonStart, buttonHelp;
 	BufferedImage title, instructions, scene1, scene2, scene3, scene5, scene6, scene8, scene10, scene11;
-	BufferedImage inventoryText, keepLooking, personTalking, success1, notKilled, getWeapon, success2; 
-	BufferedImage grass, wood, castle;
+	BufferedImage inventoryText, keepLooking, personTalking, success1, notKilled, getWeapon, success2, kingText; 
+	BufferedImage grass, wood, castle, castleInterior, win;
 	String text;
 	Icon start;
 	Color brown;
 	ArrayList<Item> items;
 	ArrayList<People> npcs;
+	Coin[] coins;
 	Font titleFont, buttonFont, textFont, questFont;
 
 	public Screen()
@@ -46,6 +47,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		p1 = new Player(20, 20);
 		items = new ArrayList<Item>();
 		npcs = new ArrayList<People>();
+		coins = new Coin[100];
 		items.add(new Spear(300, 600));
 		items.add(new Chainmail1(500, 200));
 		items.add(new Dagger(700, 300));
@@ -53,6 +55,10 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		items.add(new Bow(300, 400));
 		items.add(new Quiver(200, 100));
 		items.add(new Arrow(430, 100));
+		items.add(new Moneybag(750, 470));
+		items.add(new Moneybag(750, 150));
+		items.add(new Moneybag2(770, 250));
+		items.add(new Moneybag(750, 200));
 		npcs.add(new Friend(100, 70));
 		npcs.add(new Enemy1(500, 300));
 		npcs.add(new Dummy(600, 100));
@@ -64,10 +70,16 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 		npcs.add(new Enemy3(700, 100));
 		npcs.add(new Enemy3(700, 300));
 		npcs.add(new Enemy3(700, 500));
+		npcs.add(new King(800, 350));
+		for(int i = 0; i < coins.length; i++)
+		{
+			coins[i] = new Coin((int)(Math.random() * 1000), (int)(Math.random() * 700));
+		}
 		stage = 0;
 		quest = 0;
 		nearCharacter = -1;
 		inventory = false;
+		kingTalking = true;
 		brown = new Color(153, 102, 0);
 		titleFont = new Font("Luminari", Font.BOLD, 70);
 		buttonFont = new Font("Luminari", Font.BOLD, 50);
@@ -87,7 +99,22 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				e.printStackTrace();
 			}
 			try {
+				win = ImageIO.read(new File("images/win.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
 				castle = ImageIO.read(new File("images/castle.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				castleInterior = ImageIO.read(new File("images/castleInterior.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				kingText = ImageIO.read(new File("images/kingText.png"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -308,13 +335,13 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 			if(stage == 8)
 			{
 				g.drawImage(scene8, 0, 0, null);
-				npcs.get(5).notVisible();
-				npcs.get(6).notVisible();
-				npcs.get(7).notVisible();
 			}
 			//quest 3 (kill enemy)
 			else if(stage == 9)
 			{
+				npcs.get(5).notVisible();
+				npcs.get(6).notVisible();
+				npcs.get(7).notVisible();
 				g.drawImage(grass, 0, 0, null);
 				npcs.get(4).move();
 				npcs.get(4).drawMe(g);
@@ -356,7 +383,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				}
 			}
 		}
-		//Stages 10-13
+		//Stages 10-14
 		{
 			if(stage == 10)
 			{
@@ -368,16 +395,9 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				npcs.get(5).setVisible();
 				npcs.get(6).setVisible();
 				npcs.get(7).setVisible();
-				npcs.get(5).setLives();
-				npcs.get(6).setLives();
-				npcs.get(7).setLives();
-
 			}
 			else if(stage == 12)
 			{
-				npcs.get(8).notVisible();
-				npcs.get(9).notVisible();
-				npcs.get(10).notVisible();
 				p1.clearInventory();
 				p1.changeSkin2();
 				g.drawImage(grass, 0, 0, null);
@@ -425,12 +445,15 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 					p1.setX(10);
 					npcs.get(0).setX(p1.getX() - 100);
 					npcs.get(0).setY(p1.getY() - 100);
-					npcs.get(8).setLives();
-					npcs.get(9).setLives();
-					npcs.get(10).setLives();
 					npcs.get(5).notVisible();
 					npcs.get(6).notVisible();
 					npcs.get(7).notVisible();
+					npcs.get(8).setVisible();
+					npcs.get(9).setVisible();
+					npcs.get(10).setVisible();
+					npcs.get(8).setLives();
+					npcs.get(9).setLives();
+					npcs.get(10).setLives();
 					stage = 13;
 				}
 			}
@@ -478,8 +501,40 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				npcs.get(9).drawMe(g);
 				npcs.get(10).drawMe(g);
 			}
+			else if(stage == 14)
+			{
+				g.drawImage(castleInterior, 0, 0, null);
+				items.get(7).drawMe(g);
+				items.get(8).drawMe(g);
+				items.get(9).drawMe(g);
+				items.get(10).drawMe(g);
+				p1.changeSkin2();
+				npcs.get(11).drawMe(g);
+				p1.drawMe(g);
+				npcs.get(0).drawMe(g);
+				npcs.get(0).setLocation(p1.getX() - 100, p1.getY() - 100);
+				
+				if(kingTalking)
+				{
+					g.drawImage(kingText, 0, 400, null);
+				}
+				if(p1.getInventorySize() == 4)
+				{
+					stage++;
+				}
+			}
+			else if(stage == 15)
+			{
+				g.drawImage(win, 0, 0, null);
+				g.setFont(titleFont);
+				g.drawString("You Win!", 350, 200);
+				for(int i = 0; i < coins.length; i++)
+				{
+					coins[i].drawMe(g);
+				}
+			}
 		}
-		if (inventory)
+		if (inventory && (stage != 14 || stage != 15))
 		{
 			g.drawImage(wood, 10, 10, null);
 			g.setColor(brown);
@@ -517,9 +572,8 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 			g.setColor(Color.WHITE);
 			String questString = String.valueOf(quest);
 			g.drawString(questString, 990, 20);
-			String stageString = String.valueOf(stage);
-			g.drawString(stageString, 20, 20);
 		}
+		
 	}
 	public void playSoundStab()
 	{
@@ -555,21 +609,21 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 			//enemy movement
 			if(stage == 9)
 			{
-				if (count < 230)
+				if (count < 100)
 				{
 					npcs.get(4).moveUp(new File("images/playerSkin3Back.png"));
 				}
-				else if (count < 600)
+				else if (count < 300)
 				{
 					npcs.get(4).moveDown(new File("images/playerSkin3Front.png"));
 				}
-				else if(count < 1000)
+				else if(count < 500)
 				{
 					npcs.get(4).moveUp(new File("images/playerSkin3Back.png"));
 				}
 				else
 				{
-					count = 230;
+					count = 100;
 				}
 				count++;
 			}
@@ -627,6 +681,10 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 			if(moveRight)
 			{
 				p1.moveRight();
+			}
+			for(int i = 0; i < coins.length; i++)
+			{
+				coins[i].movement();
 			}
 			//wait for .01 second
             try 
@@ -709,9 +767,14 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				stage = 9;
 				quest = 3;
 				p1.resetLoc();
+				npcs.get(2).notVisible();
+				npcs.get(3).notVisible();
 			}
 			else if(stage < 12)
 			{
+				npcs.get(5).setVisible();
+				npcs.get(6).setVisible();
+				npcs.get(7).setVisible();
 				stage = 12;
 				quest = 4;
 				p1.resetLoc();
@@ -727,6 +790,19 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				stage = 13;
 				quest = 4;
 			}
+			else if(stage < 14)
+			{
+				p1.setX(200);
+				p1.setY(350);
+				npcs.get(5).notVisible();
+				npcs.get(6).notVisible();
+				npcs.get(7).notVisible();
+				npcs.get(8).notVisible();
+				npcs.get(9).notVisible();
+				npcs.get(10).notVisible();
+				stage = 14;
+				quest = 4;
+			}
 		}
 		//r
 		if(e.getKeyCode() == 82)
@@ -740,12 +816,12 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				&& npcs.get(i).getVisible())
 				{
 					nearCharacter = i;
+					System.out.println(i + ": " + npcs.get(i).getVisible());
 					if(npcs.get(i).getVisible())
 					{
 						playSoundStab();
 						npcs.get(i).loseLives();
-					}
-					
+					}	
 				}
 			}
 		}
@@ -795,7 +871,25 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 			{
 				nearCharacter = -1;
 			}
-			else if(stage != 4 && stage != 7 && stage != 9 && stage != 12)
+			else if(	p1.getX() <= 1056 
+			&& 800 <= p1.getX() + p1.getWidth() 
+			&& p1.getY() <= 456 
+			&& 200 <= p1.getY() + p1.getHeight() 
+			&& stage == 13
+			&& !npcs.get(8).getVisible()
+			&& !npcs.get(9).getVisible()
+			&& !npcs.get(10).getVisible()	)
+			{
+				stage++;
+				p1.setX(100);
+				npcs.get(0).setX(0);
+				npcs.get(0).setY(p1.getY() - 100);
+			}
+			else if(stage == 14)
+			{
+				kingTalking = false;
+			}
+			else if(stage != 4 && stage != 7 && stage != 9 && stage != 12 && stage != 13)
 			{
 				stage++;
 				if(stage == 3 || stage == 6 || stage == 8 || stage == 11)

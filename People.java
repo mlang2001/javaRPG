@@ -89,6 +89,7 @@ public abstract class People
     {
         visible = true;
     }
+    //set visible to false
     public void notVisible()
     {
         visible = false;

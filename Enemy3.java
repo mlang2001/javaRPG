@@ -10,15 +10,19 @@ public class Enemy3 extends People
     {
         super(x, y, 80, 93);
         super.setSkin(new File("images/playerSkin3Left.png"));
-        super.setVisible();
+        super.notVisible();
     }
     public void drawMe(Graphics g)
     {
-        for(int i = 0; i < lives; i++)
+        if(super.getVisible())
         {
-            g.drawImage(super.heart, super.x + (i * 30), super.y - 20, null);
+            for(int i = 0; i < lives; i++)
+            {
+                g.drawImage(super.heart, super.x + (i * 30), super.y - 20, null);
+            }
+            super.drawMe(g);
         }
-        super.drawMe(g);
+        
     }
     public void attack()
     {
