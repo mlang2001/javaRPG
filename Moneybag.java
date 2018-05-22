@@ -9,6 +9,6 @@ public class Moneybag extends Item
     {
         super(x, y, 123, 65);
         super.setSkin(new File("images/moneybag.png"));
-        super.setVisible();
+        super.notVisible();
     }
 }

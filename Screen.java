@@ -2,7 +2,7 @@ import java.awt.Graphics;
 import java.awt.Color;
 import javax.swing.JPanel;
 import javax.swing.Icon;
-import javax.swing.*;
+///import javax.swing.*;
 import java.awt.*;
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
-import javax.swing.JButton;
+import javax.swing.ImageIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.lang.model.util.ElementScanner6;
-
 import java.awt.geom.RoundRectangle2D;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
@@ -29,10 +28,9 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 	Player p1;
 	int stage, nearCharacter, quest;
 	boolean inventory, moveUp, moveDown, moveLeft, moveRight, kingTalking;
-	JButton buttonStart, buttonHelp;
 	BufferedImage title, instructions, scene1, scene2, scene3, scene5, scene6, scene8, scene10, scene11;
 	BufferedImage inventoryText, keepLooking, personTalking, success1, notKilled, getWeapon, success2, kingText; 
-	BufferedImage grass, wood, castle, castleInterior, win;
+	BufferedImage grass, wood, castle, castleInterior, win, tree1, tree2, rightArrow;
 	String text;
 	Icon start;
 	Color brown;
@@ -40,7 +38,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 	ArrayList<People> npcs;
 	Coin[] coins;
 	Font titleFont, buttonFont, textFont, questFont;
-
+	Image arrowRight;
 	public Screen()
 	{
 		this.setLayout(null);
@@ -88,13 +86,29 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 
 		//Instantiate images
 		{
+			arrowRight = new ImageIcon("images/rightArrow.gif").getImage();
 			try {
 				grass = ImageIO.read(new File("images/grass.png"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			try {
+				tree1 = ImageIO.read(new File("images/tree1.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				tree2 = ImageIO.read(new File("images/tree2.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
 				wood = ImageIO.read(new File("images/wood.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				rightArrow = ImageIO.read(new File("images/rightArrow.png"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -283,6 +297,8 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				npcs.get(0).drawMe(g);
 				npcs.get(1).drawMe(g);
 				p1.drawMe(g);
+				g.drawImage(tree2, 760, 30, null);
+				g.drawImage(tree1, 10, 500, null);
 				if(nearCharacter == 0)
 				{
 					if(p1.getInventorySize() != 2)
@@ -324,6 +340,8 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				p1.drawMe(g);
 				npcs.get(2).drawMe(g);
 				npcs.get(3).drawMe(g);
+				g.drawImage(tree2, 760, 30, null);
+				g.drawImage(tree1, 10, 500, null);
 				if(!npcs.get(2).getVisible() && !npcs.get(3).getVisible())
 				{
 					stage++;
@@ -363,6 +381,8 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				items.get(3).drawMe(g, npcs.get(4).getX() - 30, npcs.get(4).getY() + 70);
 				p1.drawMe(g);
 				npcs.get(0).drawMe(g);
+				g.drawImage(tree2, 760, 30, null);
+				g.drawImage(tree1, 10, 500, null);
 				if(nearCharacter == 0)
 				{
 					if(npcs.get(4).getVisible())
@@ -396,6 +416,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				npcs.get(6).setVisible();
 				npcs.get(7).setVisible();
 			}
+			//first three enemies
 			else if(stage == 12)
 			{
 				p1.clearInventory();
@@ -437,9 +458,15 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				}
 				npcs.get(0).drawMe(g);
 				p1.drawMe(g);
+				g.drawImage(tree2, 760, 30, null);
+				g.drawImage(tree1, 10, 500, null);
 				npcs.get(5).drawMe(g);
 				npcs.get(6).drawMe(g);
 				npcs.get(7).drawMe(g);
+				if(!npcs.get(5).getVisible() && !npcs.get(6).getVisible() && !npcs.get(7).getVisible())
+				{
+					g.drawImage(arrowRight, 850, 625, null);
+				}
 				if(p1.getX() > 1000)
 				{
 					p1.setX(10);
@@ -457,6 +484,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 					stage = 13;
 				}
 			}
+			//second three enemies
 			else if(stage == 13)
 			{
 				g.drawImage(grass, 0, 0, null);
@@ -495,11 +523,23 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 						items.get(6).drawMe(g);
 					}
 				}
+				
 				npcs.get(0).drawMe(g);
 				p1.drawMe(g);
+				g.drawImage(tree2, 760, 30, null);
+				g.drawImage(tree1, 10, 500, null);
 				npcs.get(8).drawMe(g);
 				npcs.get(9).drawMe(g);
 				npcs.get(10).drawMe(g);
+
+				items.get(7).setVisible();
+				items.get(8).setVisible();
+				items.get(9).setVisible();
+				items.get(10).setVisible();
+				if(!npcs.get(8).getVisible() && !npcs.get(9).getVisible() && !npcs.get(10).getVisible())
+				{
+					
+				}
 			}
 			else if(stage == 14)
 			{
@@ -816,7 +856,7 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 				&& npcs.get(i).getVisible())
 				{
 					nearCharacter = i;
-					System.out.println(i + ": " + npcs.get(i).getVisible());
+					//System.out.println(i + ": " + npcs.get(i).getVisible());
 					if(npcs.get(i).getVisible())
 					{
 						playSoundStab();
@@ -889,6 +929,8 @@ public class Screen extends JPanel implements KeyListener, ActionListener, Mouse
 			{
 				kingTalking = false;
 			}
+			else if (stage == 15)
+			{}
 			else if(stage != 4 && stage != 7 && stage != 9 && stage != 12 && stage != 13)
 			{
 				stage++;
